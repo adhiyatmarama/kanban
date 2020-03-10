@@ -7,5 +7,6 @@ router.get('/', authentication, taskController.getTasks)
 router.post('/', authentication, taskController.addTask)
 
 router.get('/:id', authentication, authorization, taskController.getOne)
+router.put('/:id', authentication, authorization, taskController.edit)
 
 module.exports = router

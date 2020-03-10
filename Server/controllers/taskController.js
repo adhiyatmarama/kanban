@@ -54,5 +54,26 @@ class TaskController {
             next({status: 500, msg: 'Server Error'})
         })
     }
+    static edit(req, res, next){
+        let id = Number(req.params.id)
+        let UserId = req.userData.id
+        let {title, description, category} = req.body;
+        let newTask = {
+            title, description, category, UserId
+        }
+        Task.update(newTask, {where: {id}})
+        .then(result => {
+            if(result[0]){
+                res.status(200).json(newTask)
+            }else{
+                next({status: 404, msg: 'Task not found'})
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            console.log('Dari edit task')
+            next({status: 500, msg: 'Server Error'})
+        })
+    }
 }
 module.exports = TaskController
