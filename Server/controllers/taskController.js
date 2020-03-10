@@ -13,9 +13,10 @@ class TaskController {
     }
     static addTask(req, res, next){
         let {title, description} = req.body;
+        let UserId = req.userData.id
         let category = 'Backlog'
         Task.create({
-            title, description, category
+            title, description, category, UserId
         })
         .then(data => {
             res.status(201).json(data)
