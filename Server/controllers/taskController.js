@@ -75,5 +75,22 @@ class TaskController {
             next({status: 500, msg: 'Server Error'})
         })
     }
+    static delete(req, res, next){
+        let id = Number(req.params.id)
+        Task.destroy({where: {id}})
+        .then(result => {
+            if(result){
+                res.status(200).json('Berhasil menghapus task')
+            }
+            else{
+                next({status: 404, msg: 'Task Not Found'})
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            console.log('dari delete task')
+            next({status: 500, msg: 'Server Error'})
+        })
+    }
 }
 module.exports = TaskController
