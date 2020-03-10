@@ -2,7 +2,8 @@ const {Task} = require('../models')
 
 class TaskController {
     static getTasks(req, res, next){
-        Task.findAll()
+        let UserId = req.userData.id
+        Task.findAll({where: {UserId}})
         .then(tasks => {
             res.status(200).json(tasks)
         })
@@ -36,6 +37,21 @@ class TaskController {
             }else{
                 next({status: 500, msg: 'Server Error'})
             }
+        })
+    }
+    static getOne(req, res, next){
+        let id = Number(req.params.id)
+        Task.findByPk(id)
+        .then(result => {
+            if(result){
+                res.status(200).json(result)
+            }else{
+                next({status: 404, msg: 'Task not found'})
+            }
+        })
+        .catch(err => {
+            console.log(err, 'Ini di getOne Task')
+            next({status: 500, msg: 'Server Error'})
         })
     }
 }
