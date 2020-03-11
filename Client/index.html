@@ -47,6 +47,7 @@
                         <input type="password" id="login-password" placeholder="Password" v-model="loginPassword"><br>
                         <div class="g-signin2" data-onsuccess="onSignIn" style="margin:10px auto; width: 100px;"></div>
                         <button type="submit">Sign in</button>
+                        <p v-if="logInError" style="color: red">{{logInError}}</p>
                     </form>
                 </div>
                 <div class="register" v-if="registerPage">
@@ -145,7 +146,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal" v-if="addTaskForm">
+            <div class="modal-cust" v-if="addTaskForm">
                 <div class="add-task">
                     <div>
                         <div class="close" @click="addTaskForm = false">+</div>
@@ -166,6 +167,7 @@
     </div> 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         var app = new Vue({
             el: '#app',
@@ -180,7 +182,8 @@
                 loginPassword: '',
                 addTaskForm: false,
                 addTaskTitle: '',
-                addTaskDesc: ''
+                addTaskDesc: '',
+                logInError: '',
             },
             created(){
                 if(localStorage.token){
@@ -229,9 +232,11 @@
                             localStorage.setItem('token', data.token)
                             this.isLogin = true
                             this.getTasks()
+                            this.logInError = ''
                         })
                         .catch(err => {
-                            console.log(err)
+                            this.logInError = ''
+                            this.logInError = err.response.data.msg
                         })
                     },
                     logout: function(){
@@ -264,22 +269,37 @@
                         })
                     },
                     deleteTask(id){
-                        console.log(id)
-                        let options = {
-                            url: `${this.baseUrl}/tasks/${id}`,
-                            method: 'delete',
-                            headers: {
-                                token: localStorage.token
+                        swal({
+                            title: "Are you sure?",
+                            text: "Once deleted, you will not be able to recover this task!",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                        })
+                        .then((willDelete) => {
+                            if (willDelete) {
+                                let options = {
+                                    url: `${this.baseUrl}/tasks/${id}`,
+                                    method: 'delete',
+                                    headers: {
+                                        token: localStorage.token
+                                    }
+                                }
+                                axios(options)
+                                .then(({data}) => {
+                                    swal("Poof! Your Task has been deleted!", {
+                                        icon: "success",
+                                    });
+                                    this.getTasks()
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                })   
+                            } else {
+                                swal("Your Task is safe!");
                             }
-                        }
-                        axios(options)
-                        .then(({data}) => {
-                            console.log(data)
-                            this.getTasks()
-                        })
-                        .catch(error => {
-                            console.log(error)
-                        })
+                        });
+                        
                     }
             },
             computed: {

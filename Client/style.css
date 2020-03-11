@@ -111,7 +111,7 @@ form input{
 .btn-add-task:hover{
     cursor: pointer;
 }
-.modal{
+.modal-cust{
     width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.473); position: absolute; top: 0;
     display: flex; justify-content: center; align-items: center; left: 0;
 }.add-task{
