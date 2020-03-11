@@ -49,7 +49,7 @@ class UserController {
         .then(result => {
             if(result){
                 let token = makeToken(userFound)
-                res.status(200).json({token})
+                res.status(200).json({token, name: userFound.name})
             }else{
                 next({status: 400, msg: 'Wrong Password'})
             }

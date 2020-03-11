@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class="main-page" v-if="isLogin">
-            <h1>Hello Name, This Is Your Kanban</h1>
+            <h1>Hello {{name}}, This Is Your Kanban</h1>
             <div class="kanban">
                 <div class="backlog border-1">
                     <div class="container-title" style="background-color: #f70763; border-top-left-radius: 7px; border-top-right-radius: 7px;">
@@ -149,13 +149,14 @@
             <div class="modal-cust" v-if="addTaskForm">
                 <div class="add-task">
                     <div>
-                        <div class="close" @click="addTaskForm = false">+</div>
+                        <div class="close" @click="addTaskForm = false; addTaskTitle = ''; addTaskDesc = ''; addTaskError = ''">+</div>
                         <h2 style="margin-bottom: 20px;">Add Task</h2>
                         <i class="fa fa-list" style="font-size: 120px; color: rgb(28, 190, 201); margin: 20px auto"></i>
                         <form @submit.prevent="addTask">
                             <input type="text" placeholder="Title" v-model="addTaskTitle"><br>
                             <input type="text" placeholder="Description" v-model="addTaskDesc"><br>
                             <button type="submit" style="margin-top: 10px;">Add Task</button>
+                            <p v-if="addTaskError" style="color: red">{{addTaskError}}</p>
                         </form>
                     </div>
                 </div>
@@ -173,6 +174,7 @@
             el: '#app',
             data: {
                 message: 'Hello Vue!',
+                name: '',
                 tasks : [],
                 isLogin: false,
                 loginPage: true,
@@ -184,10 +186,12 @@
                 addTaskTitle: '',
                 addTaskDesc: '',
                 logInError: '',
+                addTaskError: '',
             },
             created(){
                 if(localStorage.token){
                     this.isLogin = true
+                    this.name = localStorage.name
                     this.getTasks()
                 }
             },
@@ -228,8 +232,9 @@
                         }
                         axios(options)
                         .then(({data}) => {
-                            console.log(data)
                             localStorage.setItem('token', data.token)
+                            localStorage.setItem('name', data.name)
+                            this.name = data.name
                             this.isLogin = true
                             this.getTasks()
                             this.logInError = ''
@@ -241,6 +246,7 @@
                     },
                     logout: function(){
                         localStorage.removeItem('token')
+                        this.name = ''
                         this.isLogin = false
                         this.loginEmail = ''
                         this.loginPassword = ''
@@ -262,10 +268,13 @@
                             this.addTaskTitle = ''
                             this.addTaskDesc = ''
                             this.addTaskForm = false,
+                            this.addTaskError = ''
                             this.getTasks()
                         })
-                        .catch(error => {
-                            console.log(error)
+                        .catch(err => {
+                            err.response.data.error.forEach(item => {
+                                this.addTaskError += `${item.msg}`
+                            })
                         })
                     },
                     deleteTask(id){
