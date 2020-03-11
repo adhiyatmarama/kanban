@@ -79,7 +79,7 @@
                                 </div>
                             </div>
                             <div class="action">
-                                <i class="fa fa-trash"></i>
+                                <i class="fa fa-trash" style="font-size: 24px; color: #f70763;" ></i>
                             </div>
                         </div>
                     </div>
@@ -90,11 +90,16 @@
                     </div>
                     <div class="card">
                         <div class="container-content border-2" v-for="task in todos">
-                            <div class="task-title">
-                                <span>{{task.title}}</span>
+                            <div>
+                                <div class="task-title">
+                                    <span>{{ task.title }}</span>
+                                </div>
+                                <div class="task-description">
+                                    <span>{{ task.description }}</span>
+                                </div>
                             </div>
-                            <div class="task-description">
-                                <span>{{task.description}}</span>
+                            <div class="action">
+                                <i class="fa fa-trash" style="font-size: 24px; color: #f70763;"></i>
                             </div>
                         </div>
                     </div>
@@ -105,11 +110,16 @@
                     </div>
                     <div class="card">
                         <div class="container-content border-3" v-for="task in dones">
-                            <div class="task-title">
-                                <span>{{task.title}}</span>
+                            <div>
+                                <div class="task-title">
+                                    <span>{{ task.title }}</span>
+                                </div>
+                                <div class="task-description">
+                                    <span>{{ task.description }}</span>
+                                </div>
                             </div>
-                            <div class="task-description">
-                                <span>{{task.description}}</span>
+                            <div class="action">
+                                <i class="fa fa-trash" style="font-size: 24px; color: #f70763;"></i>
                             </div>
                         </div>
                     </div>
@@ -120,17 +130,36 @@
                     </div>
                     <div class="card">
                         <div class="container-content border-4" v-for="task in completeds">
-                            <div class="task-title">
-                                <span>{{task.title}}</span>
+                            <div>
+                                <div class="task-title">
+                                    <span>{{ task.title }}</span>
+                                </div>
+                                <div class="task-description">
+                                    <span>{{ task.description }}</span>
+                                </div>
                             </div>
-                            <div class="task-description">
-                                <span>{{task.description}}</span>
+                            <div class="action">
+                                <i class="fa fa-trash" style="font-size: 24px; color: #f70763;"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="btn-add-task">
+            <div class="modal" v-if="addTaskForm">
+                <div class="add-task">
+                    <div>
+                        <div class="close" @click="addTaskForm = false">+</div>
+                        <h2 style="margin-bottom: 20px;">Add Task</h2>
+                        <i class="fa fa-list" style="font-size: 120px; color: rgb(28, 190, 201); margin: 20px auto"></i>
+                        <form @submit.prevent="addTask">
+                            <input type="text" placeholder="Title" v-model="addTaskTitle"><br>
+                            <input type="text" placeholder="Description" v-model="addTaskDesc"><br>
+                            <button type="submit" style="margin-top: 10px;">Add Task</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-add-task" @click="addTaskForm = true">
                 <span>+</span>
             </div>
         </div>
@@ -148,7 +177,10 @@
                 registerPage: false,
                 baseUrl: 'http://localhost:3001',
                 loginEmail: '',
-                loginPassword: ''
+                loginPassword: '',
+                addTaskForm: false,
+                addTaskTitle: '',
+                addTaskDesc: ''
             },
             created(){
                 if(localStorage.token){
@@ -166,6 +198,7 @@
                         this.registerPage = false
                     },
                     getTasks: function(){
+                        this.tasks = []
                         let options = {
                             url: `${this.baseUrl}/tasks`,
                             method: 'get',
@@ -206,6 +239,29 @@
                         this.isLogin = false
                         this.loginEmail = ''
                         this.loginPassword = ''
+                    },
+                    addTask(){
+                        let options = {
+                            url: `${this.baseUrl}/tasks`,
+                            method: 'post',
+                            data: {
+                                title: this.addTaskTitle,
+                                description: this.addTaskDesc
+                            },
+                            headers: {
+                                token: localStorage.token
+                            }
+                        }
+                        axios(options)
+                        .then(({data}) => {
+                            this.addTaskTitle = ''
+                            this.addTaskDesc = ''
+                            this.addTaskForm = false,
+                            this.getTasks()
+                        })
+                        .catch(error => {
+                            console.log(error)
+                        })
                     }
             },
             computed: {
