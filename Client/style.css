@@ -124,3 +124,9 @@ form input{
 .close:hover{
     cursor: pointer;
 }
+.btn-delete{
+    color: #f70763;
+}
+.btn-delete:hover{
+    cursor: pointer;
+}
