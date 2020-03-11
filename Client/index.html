@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo" style="float: left; margin-left: 20px;">
+                    <h2 style="margin-top: 14px;">KANBAN</h2>
+                </div>
+                <div class="navbar" style="float: left; margin-top: 6px; display: none;">
+                    <ul>
+                        <li>HOME</li>
+                        <li>ABOUT US</li>
+                    </ul>
+                </div>
+                <div class="sign-in" style="float: right; margin-right: 20px; margin-top: 6px;" v-if="!isLogin">
+                    <ul>
+                        <li v-on:click="showLogin">SIGN IN</li>
+                        <li v-on:click="showRegister">REGISTER</li>
+                    </ul>
+                </div>
+                <div class="logout" style="float: right; margin-right: 20px; margin-top: 6px;" v-if="isLogin">
+                    <ul>
+                        <li @click="logout">SIGN OUT</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="landing-page" v-if="!isLogin">
+            <div class="welcome">
+                <h3>WELCOME TO</h3>
+                <h1>KANBAN APPS</h1>
+                <img src="kids-holding-colorful-blocks-illustration_53876-40275.jpg" style="width: 80%; height: auto;">
+            </div>
+            <div class="login-register">
+                <div class="login" v-if="loginPage">
+                    <h3>Sign In</h3>
+                    <form style="width: 300px; margin: 10px auto;" id="submit-login" @submit.prevent="logIn">
+                        <input type="text" id="login-email" placeholder="Email" v-model="loginEmail"><br>
+                        <input type="password" id="login-password" placeholder="Password" v-model="loginPassword"><br>
+                        <div class="g-signin2" data-onsuccess="onSignIn" style="margin:10px auto; width: 100px;"></div>
+                        <button type="submit">Sign in</button>
+                    </form>
+                </div>
+                <div class="register" v-if="registerPage">
+                    <h3>Register</h3>
+                    <form style="width: 300px; margin: 10px auto;" id="submit-register">
+                        <input type="text" id="register-first_name" placeholder="First Name"><br>
+                        <input type="text" id="register-last_name" placeholder="Last Name"><br>
+                        <input type="text" id="register-email" placeholder="Email"><br>
+                        <input type="password" id="register-password" placeholder="Password"><br>
+                        <button type="submit" style="margin-top: 10px;">Register</button>
+                    </form> 
+                </div>
+            </div>
+        </div>
+        <div class="main-page" v-if="isLogin">
+            <h1>Hello Name, This Is Your Kanban</h1>
+            <div class="kanban">
+                <div class="backlog border-1">
+                    <div class="container-title" style="background-color: #f70763; border-top-left-radius: 7px; border-top-right-radius: 7px;">
+                        <h3>Backlog</h3>
+                    </div>
+                    <div class="card">
+                        <div class="container-content border-1" v-for="task in backLogs">
+                            <div>
+                                <div class="task-title">
+                                    <span>{{ task.title }}</span>
+                                </div>
+                                <div class="task-description">
+                                    <span>{{ task.description }}</span>
+                                </div>
+                            </div>
+                            <div class="action">
+                                <i class="fa fa-trash"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="todo border-2">
+                    <div class="container-title" style="background-color: #ffc524;  border-top-left-radius: 7px; border-top-right-radius: 7px; color: ">
+                        <h3>Todo</h3>
+                    </div>
+                    <div class="card">
+                        <div class="container-content border-2" v-for="task in todos">
+                            <div class="task-title">
+                                <span>{{task.title}}</span>
+                            </div>
+                            <div class="task-description">
+                                <span>{{task.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="done border-3">
+                    <div class="container-title" style="background-color: #3f96cc; border-top-left-radius: 7px; border-top-right-radius: 7px;">
+                        <h3>Done</h3>
+                    </div>
+                    <div class="card">
+                        <div class="container-content border-3" v-for="task in dones">
+                            <div class="task-title">
+                                <span>{{task.title}}</span>
+                            </div>
+                            <div class="task-description">
+                                <span>{{task.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="completed border-4">
+                    <div class="container-title" style="background-color: #4bd19c; border-top-left-radius: 7px; border-top-right-radius: 7px">
+                        <h3>Completed</h3>
+                    </div>
+                    <div class="card">
+                        <div class="container-content border-4" v-for="task in completeds">
+                            <div class="task-title">
+                                <span>{{task.title}}</span>
+                            </div>
+                            <div class="task-description">
+                                <span>{{task.description}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-add-task">
+                <span>+</span>
+            </div>
+        </div>
+    </div> 
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Hello Vue!',
+                tasks : [],
+                isLogin: false,
+                loginPage: true,
+                registerPage: false,
+                baseUrl: 'http://localhost:3001',
+                loginEmail: '',
+                loginPassword: ''
+            },
+            created(){
+                if(localStorage.token){
+                    this.isLogin = true
+                    this.getTasks()
+                }
+            },
+            methods: {
+                    showRegister: function(){
+                        this.loginPage = false;
+                        this.registerPage = true
+                    },
+                    showLogin: function(){
+                        this.loginPage = true;
+                        this.registerPage = false
+                    },
+                    getTasks: function(){
+                        let options = {
+                            url: `${this.baseUrl}/tasks`,
+                            method: 'get',
+                            headers: {
+                                token: localStorage.token
+                            }
+                        }
+                        axios(options)
+                        .then(({data}) => {
+                            this.tasks = data
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                    },
+                    logIn: function(){
+                        let options = {
+                            url: `${this.baseUrl}/user/login`,
+                            method: 'post',
+                            data: {
+                                email: this.loginEmail,
+                                password: this.loginPassword
+                            }
+                        }
+                        axios(options)
+                        .then(({data}) => {
+                            console.log(data)
+                            localStorage.setItem('token', data.token)
+                            this.isLogin = true
+                            this.getTasks()
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                    },
+                    logout: function(){
+                        localStorage.removeItem('token')
+                        this.isLogin = false
+                        this.loginEmail = ''
+                        this.loginPassword = ''
+                    }
+            },
+            computed: {
+                backLogs(){
+                    return this.tasks.filter(item => item.category === 'Backlog')
+                },
+                todos(){
+                    return this.tasks.filter(item => item.category === 'Todo')
+                },
+                dones(){
+                    return this.tasks.filter(item => item.category === 'Done')
+                },
+                completeds(){
+                    return this.tasks.filter(item => item.category === 'Completed')
+                }
+            }
+        })
+    </script>
+</body>
+</html>
