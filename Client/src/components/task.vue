@@ -46,7 +46,7 @@ export default {
                             swal("Poof! Your Task has been deleted!", {
                                 icon: "success",
                             });
-                            this.$emit('deleteTask')
+                            this.$emit('deleteTask', id)
                         })
                         .catch(error => {
                             console.log(error)

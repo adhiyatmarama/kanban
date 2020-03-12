@@ -24,8 +24,8 @@
             }
         },
         methods: {
-            deleteTask(){  
-                this.$emit('deleteTask')
+            deleteTask(id){  
+                this.$emit('deleteTask', id)
             }
                        
         }

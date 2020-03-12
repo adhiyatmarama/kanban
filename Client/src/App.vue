@@ -9,16 +9,7 @@
             </div>
             <div class="login-register">
                 <login-page :loginPage="loginPage" :logInError="logInError" @logIn="logIn"></login-page>
-                <div class="register" v-if="registerPage">
-                    <h3>Register</h3>
-                    <form style="width: 300px; margin: 10px auto;" id="submit-register" @submit.prevent="register">
-                        <input type="text" placeholder="Name" v-model="registerName"><br>
-                        <input type="text"  placeholder="Email" v-model="registerEmail"><br>
-                        <input type="password"  placeholder="Password" v-model="registerPassword"><br>
-                        <button type="submit" style="margin-top: 10px;">Register</button>
-                        <p v-for="item in registerError" style="color: red" :key="item">{{item}}</p>
-                    </form> 
-                </div>
+                <register-page :registerPage="registerPage" :registerError="registerError" @register="register"></register-page>
             </div>
         </div>
         <div class="main-page" v-if="isLogin">
@@ -63,11 +54,13 @@
     import Category from './components/category'
     import Header from './components/header'
     import LoginPage from './components/login-page'
+    import RegisterPage from './components/register-page'
     export default {
         components: {
             'category': Category,
             'header-comp' : Header,
-            'login-page': LoginPage
+            'login-page': LoginPage,
+            'register-page': RegisterPage
         },
         data: function(){
             return{
@@ -78,9 +71,6 @@
                 loginPage: true,
                 registerPage: false,
                 baseUrl: 'http://localhost:3001',
-                registerName: '',
-                registerEmail: '',
-                registerPassword: '',
                 addTaskForm: false,
                 addTaskTitle: '',
                 addTaskDesc: '',
@@ -155,14 +145,14 @@
                 this.loginEmail = ''
                 this.loginPassword = ''
             },
-            register: function(){
+            register: function(data){
                 let options = {
                     url: `${this.baseUrl}/user/register`,
                     method: 'post',
                     data: {
-                        name: this.registerName,
-                        email: this.registerEmail,
-                        password: this.registerPassword
+                        name: data.name,
+                        email: data.email,
+                        password: data.password
                     }
                 }
                 axios(options)
@@ -211,8 +201,8 @@
                     })
                 })
             },
-            deleteTask(){
-                this.getTasks()
+            deleteTask(id){
+                this.tasks = this.tasks.filter(item => item.id != id)
             }
     },
     computed: {
