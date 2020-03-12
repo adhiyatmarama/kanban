@@ -8,16 +8,7 @@
                 <img src="kids-holding-colorful-blocks-illustration_53876-40275.jpg" style="width: 80%; height: auto;">
             </div>
             <div class="login-register">
-                <div class="login" v-if="loginPage">
-                    <h3>Sign In</h3>
-                    <form style="width: 300px; margin: 10px auto;" id="submit-login" @submit.prevent="logIn">
-                        <input type="text" id="login-email" placeholder="Email" v-model="loginEmail"><br>
-                        <input type="password" id="login-password" placeholder="Password" v-model="loginPassword"><br>
-                        <div class="g-signin2" data-onsuccess="onSignIn" style="margin:10px auto; width: 100px;"></div>
-                        <button type="submit">Sign in</button>
-                        <p v-if="logInError" style="color: red">{{logInError}}</p>
-                    </form>
-                </div>
+                <login-page :loginPage="loginPage" :logInError="logInError" @logIn="logIn"></login-page>
                 <div class="register" v-if="registerPage">
                     <h3>Register</h3>
                     <form style="width: 300px; margin: 10px auto;" id="submit-register" @submit.prevent="register">
@@ -71,10 +62,12 @@
     import axios from 'axios'
     import Category from './components/category'
     import Header from './components/header'
+    import LoginPage from './components/login-page'
     export default {
         components: {
             'category': Category,
-            'header-comp' : Header
+            'header-comp' : Header,
+            'login-page': LoginPage
         },
         data: function(){
             return{
@@ -85,8 +78,6 @@
                 loginPage: true,
                 registerPage: false,
                 baseUrl: 'http://localhost:3001',
-                loginEmail: '',
-                loginPassword: '',
                 registerName: '',
                 registerEmail: '',
                 registerPassword: '',
@@ -134,13 +125,13 @@
                     console.log(err)
                 })
             },
-            logIn: function(){
+            logIn: function(data){
                 let options = {
                     url: `${this.baseUrl}/user/login`,
                     method: 'post',
                     data: {
-                        email: this.loginEmail,
-                        password: this.loginPassword
+                        email: data.email,
+                        password: data.password
                     }
                 }
                 axios(options)
