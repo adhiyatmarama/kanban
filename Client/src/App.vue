@@ -193,7 +193,7 @@
                     this.addTaskDesc = ''
                     this.addTaskForm = false,
                     this.addTaskError = ''
-                    this.getTasks()
+                    this.tasks.push(data)
                 })
                 .catch(err => {
                     err.response.data.error.forEach(item => {
