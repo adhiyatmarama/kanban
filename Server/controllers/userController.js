@@ -70,7 +70,6 @@ class UserController {
         })
         .then(ticket => {
             const payload = ticket.getPayload()
-            console.log(payload)
             user = {
                 name: payload.name,
                 email: payload.email,
@@ -79,7 +78,6 @@ class UserController {
             return User.findOne({where: {email: user.email}})
         })
         .then(userdata => {
-            console.log(userdata)
             if(!userdata){
                 return User.create(user)
             }else{
