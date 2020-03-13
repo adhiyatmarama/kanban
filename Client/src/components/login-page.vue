@@ -31,10 +31,6 @@ export default {
     },
     methods: {
         logIn(){
-            // let data = {
-            //     email: this.loginEmail,
-            //     password: this.loginPassword
-            // }
             let options = {
                 url: `${this.baseUrl}/user/login`,
                 method: 'post',
@@ -53,6 +49,8 @@ export default {
                 this.$emit('logIn', user)
             })
             .catch(err => {
+                this.loginEmail = '',
+                this.loginPassword = ''
                 let data = {
                     error: err.response.data.msg
                 }
@@ -101,5 +99,10 @@ export default {
   padding: 5px 25px 5px 25px;
   /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
   margin-top: 5px; margin-bottom: 20px;
+}
+.google-signin-button:hover{
+    color: white;
+    background-color: rgb(28, 190, 201);
+    cursor: pointer;
 }
 </style>

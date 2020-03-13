@@ -99,167 +99,165 @@
                 ]
             }
         } ,
-    created(){
-        if(localStorage.token){
-            this.isLogin = true
-            this.name = localStorage.name
-            this.getTasks()
-        }
-    },
-    methods: {
-            showRegister: function(){
-                this.loginPage = false;
-                this.registerPage = true
-                this.logInError = ''
-            },
-            showLogin: function(){
-                this.loginPage = true;
-                this.registerPage = false
-                this.registerError = []
-            },
-            getTasks: function(){
-                this.tasks = []
-                let options = {
-                    url: `${this.baseUrl}/tasks`,
-                    method: 'get',
-                    headers: {
-                        token: localStorage.token
-                    }
-                }
-                axios(options)
-                .then(({data}) => {
-                    this.tasks = data
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-            },
-            logIn: function(data){
-                if(data.name){
-                    this.name = data.name
-                    this.isLogin = true
-                    this.getTasks()
+        created(){
+            if(localStorage.token){
+                this.isLogin = true
+                this.name = localStorage.name
+                this.getTasks()
+            }
+        },
+        methods: {
+                showRegister: function(){
+                    this.loginPage = false;
+                    this.registerPage = true
                     this.logInError = ''
-                }else{
-                    this.logInError = ''
-                    this.logInError = data.error
-                }
-            },
-            logout: function(){
-                // var auth2 = gapi.auth2.getAuthInstance();
-                // auth2.signOut().then(function () {
-                //     console.log('User signed out.');
-                // });
-                localStorage.removeItem('token')
-                this.name = ''
-                this.isLogin = false
-                this.loginEmail = ''
-                this.loginPassword = ''
-            },
-            register: function(data){
-                let options = {
-                    url: `${this.baseUrl}/user/register`,
-                    method: 'post',
-                    data: {
-                        name: data.name,
-                        email: data.email,
-                        password: data.password
-                    }
-                }
-                axios(options)
-                .then(({data}) => {
+                },
+                showLogin: function(){
                     this.loginPage = true;
-                    this.registerPage = false;
+                    this.registerPage = false
                     this.registerError = []
-                    this.registerEmail = '';
-                    this.registerName = '';
-                    this.registerPassword = ''
-                })
-                .catch(err => {
-                    this.registerError = []
-                    if(err.response.data.error){
-                        err.response.data.error.forEach(item => {
-                            this.registerError.push(item.msg)
-                        })
-                    }else{
-                        this.registerError.push(err.response.data.msg)
+                },
+                getTasks: function(){
+                    this.tasks = []
+                    let options = {
+                        url: `${this.baseUrl}/tasks`,
+                        method: 'get',
+                        headers: {
+                            token: localStorage.token
+                        }
                     }
-                })
-            },
-            addTask(){
-                let options = {
-                    url: `${this.baseUrl}/tasks`,
-                    method: 'post',
-                    data: {
-                        title: this.addTaskTitle,
-                        description: this.addTaskDesc
-                    },
-                    headers: {
-                        token: localStorage.token
-                    }
-                }
-                axios(options)
-                .then(({data}) => {
-                    this.addTaskTitle = ''
-                    this.addTaskDesc = ''
-                    this.addTaskForm = false,
-                    this.addTaskError = ''
-                    this.tasks.push(data)
-                })
-                .catch(err => {
-                    err.response.data.error.forEach(item => {
-                        this.addTaskError += `${item.msg}`
+                    axios(options)
+                    .then(({data}) => {
+                        this.tasks = data
                     })
-                })
-            },
-            editTask(data){
-                let id = data.id
-                let task = this.tasks.find(item => item.id === id)
-                let options = {
-                    url: `${this.baseUrl}/tasks/${data.id}`,
-                    method: 'put',
-                    data: {
-                        title: task.title,
-                        description: task.description,
-                        category: data.category
-                    },
-                    headers: {
-                        token: localStorage.token
+                    .catch(err => {
+                        console.log(err)
+                    })
+                },
+                logIn: function(data){
+                    if(data.name){
+                        this.name = data.name
+                        this.isLogin = true
+                        this.getTasks()
+                        this.logInError = ''
+                    }else{
+                        this.logInError = ''
+                        this.logInError = data.error
                     }
+                },
+                logout: function(){
+                    // var auth2 = gapi.auth2.getAuthInstance();
+                    // auth2.signOut().then(function () {
+                    //     console.log('User signed out.');
+                    // });
+                    localStorage.removeItem('token')
+                    this.name = ''
+                    this.isLogin = false
+                },
+                register: function(data){
+                    let options = {
+                        url: `${this.baseUrl}/user/register`,
+                        method: 'post',
+                        data: {
+                            name: data.name,
+                            email: data.email,
+                            password: data.password
+                        }
+                    }
+                    axios(options)
+                    .then(({data}) => {
+                        this.loginPage = true;
+                        this.registerPage = false;
+                        this.registerError = []
+                        this.registerEmail = '';
+                        this.registerName = '';
+                        this.registerPassword = ''
+                    })
+                    .catch(err => {
+                        this.registerError = []
+                        if(err.response.data.error){
+                            err.response.data.error.forEach(item => {
+                                this.registerError.push(item.msg)
+                            })
+                        }else{
+                            this.registerError.push(err.response.data.msg)
+                        }
+                    })
+                },
+                addTask(){
+                    let options = {
+                        url: `${this.baseUrl}/tasks`,
+                        method: 'post',
+                        data: {
+                            title: this.addTaskTitle,
+                            description: this.addTaskDesc
+                        },
+                        headers: {
+                            token: localStorage.token
+                        }
+                    }
+                    axios(options)
+                    .then(({data}) => {
+                        this.addTaskTitle = ''
+                        this.addTaskDesc = ''
+                        this.addTaskForm = false,
+                        this.addTaskError = ''
+                        this.tasks.push(data)
+                    })
+                    .catch(err => {
+                        err.response.data.error.forEach(item => {
+                            this.addTaskError += `${item.msg}`
+                        })
+                    })
+                },
+                editTask(data){
+                    let id = data.id
+                    let task = this.tasks.find(item => item.id === id)
+                    let options = {
+                        url: `${this.baseUrl}/tasks/${data.id}`,
+                        method: 'put',
+                        data: {
+                            title: task.title,
+                            description: task.description,
+                            category: data.category
+                        },
+                        headers: {
+                            token: localStorage.token
+                        }
+                    }
+                    axios(options)
+                    .then(({data}) => {
+                        console.log(`updated ${data.title} category into ${data.category}`)
+                    })
+                    .catch(err => {
+                        console.log(err.response)
+                    })
+                },
+                deleteTask(id){
+                    this.tasks = this.tasks.filter(item => item.id != id)
                 }
-                axios(options)
-                .then(({data}) => {
-                    console.log(`updated ${data.title} category into ${data.category}`)
-                })
-                .catch(err => {
-                    console.log(err.response)
-                })
+        },
+        computed: {
+            filtered(){
+                return {
+                    Backlog : this.backLogs,
+                    Todo: this.todos,
+                    Done: this.dones,
+                    Completed: this.completeds
+                }
             },
-            deleteTask(id){
-                this.tasks = this.tasks.filter(item => item.id != id)
+            backLogs(){
+                return this.tasks.filter(item => item.category === 'Backlog')
+            },
+            todos(){
+                return this.tasks.filter(item => item.category === 'Todo')
+            },
+            dones(){
+                return this.tasks.filter(item => item.category === 'Done')
+            },
+            completeds(){
+                return this.tasks.filter(item => item.category === 'Completed')
             }
-    },
-    computed: {
-        filtered(){
-            return {
-                Backlog : this.backLogs,
-                Todo: this.todos,
-                Done: this.dones,
-                Completed: this.completeds
-            }
-        },
-        backLogs(){
-            return this.tasks.filter(item => item.category === 'Backlog')
-        },
-        todos(){
-            return this.tasks.filter(item => item.category === 'Todo')
-        },
-        dones(){
-            return this.tasks.filter(item => item.category === 'Done')
-        },
-        completeds(){
-            return this.tasks.filter(item => item.category === 'Completed')
         }
-    }
     }
 </script>
