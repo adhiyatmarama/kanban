@@ -14,10 +14,10 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "vxawaqntkwztwi",
+    "password": "e7131f0d3f1a1b972f541732f56214a62b2f2a0e95b7f4a49727b4ee715b70a8",
+    "database": "d50nfihtfb76k3",
+    "host": "ec2-54-152-175-141.compute-1.amazonaws.com",
+    "dialect": "postgres"
   }
 }
