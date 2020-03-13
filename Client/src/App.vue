@@ -42,11 +42,14 @@
     </div> 
 </template>
 <script>
+    
     import axios from 'axios'
     import Category from './components/category'
     import Header from './components/header'
     import LoginPage from './components/login-page'
     import RegisterPage from './components/register-page'
+    let rootUrl = 'http://localhost:3001'
+    var socket = io.connect(rootUrl)
     export default {
         components: {
             'category': Category,
@@ -61,7 +64,7 @@
                 isLogin: false,
                 loginPage: true,
                 registerPage: false,
-                baseUrl: 'http://localhost:3001',
+                baseUrl: rootUrl,
                 addTaskForm: false,
                 addTaskTitle: '',
                 addTaskDesc: '',
@@ -100,12 +103,17 @@
                 ]
             }
         } ,
-        created(){
+        created: function(){
+            console.log(this.tasks, 'ini tasks')
             if(localStorage.token){
+                console.log('masuk if')
                 this.isLogin = true
                 this.name = localStorage.name
                 this.getTasks()
             }
+            socket.on('update-data', data=>{
+                this.tasks = data
+            })
         },
         methods: {
                 showRegister: function(){
@@ -205,6 +213,7 @@
                         this.addTaskForm = false,
                         this.addTaskError = ''
                         this.tasks.push(data)
+                        socket.emit('update-data', this.tasks)
                     })
                     .catch(err => {
                         err.response.data.error.forEach(item => {
@@ -235,6 +244,7 @@
                     axios(options)
                     .then(({data}) => {
                         console.log(`updated ${data.title} category into ${data.category}`)
+                        socket.emit('update-data', this.tasks)
                     })
                     .catch(err => {
                         console.log(err.response)
@@ -242,6 +252,7 @@
                 },
                 deleteTask(id){
                     this.tasks = this.tasks.filter(item => item.id != id)
+                    socket.emit('update-data', this.tasks)
                 }
         },
         computed: {
