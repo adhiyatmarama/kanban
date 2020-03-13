@@ -112,7 +112,7 @@
                 this.getTasks()
             }
             socket.on('update-data', data=>{
-                this.tasks = data
+                this.getTasks()
             })
         },
         methods: {
