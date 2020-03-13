@@ -146,10 +146,6 @@
                     }
                 },
                 logout: function(){
-                    // var auth2 = gapi.auth2.getAuthInstance();
-                    // auth2.signOut().then(function () {
-                    //     console.log('User signed out.');
-                    // });
                     localStorage.removeItem('token')
                     this.name = ''
                     this.isLogin = false
@@ -172,6 +168,11 @@
                         this.registerEmail = '';
                         this.registerName = '';
                         this.registerPassword = ''
+                        localStorage.setItem('token', data.token)
+                        localStorage.setItem('name', data.name)
+                        this.name = data.name
+                        this.isLogin = true
+                        this.getTasks()
                     })
                     .catch(err => {
                         this.registerError = []

@@ -17,10 +17,10 @@ class UserController {
             }
         })
         .then(data => {
-            res.status(201).json(data)
+            let token = makeToken(data)
+            res.status(201).json({token, name: data.name})
         })
         .catch(err => {
-            console.log(err)
             if (err.errors){
                 let error = []
                 err.errors.forEach(item => {
