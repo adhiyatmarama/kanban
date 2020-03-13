@@ -1,6 +1,12 @@
 <template>
-    <div class="container-content" v-bind:class="{'border-1': kelas.isBorder1, 'border-2': kelas.isBorder2,
-    'border-3': kelas.isBorder3, 'border-4': kelas.isBorder4}">
+    <div 
+        class="container-content" 
+        v-bind:class="{'border-1': kelas.isBorder1, 'border-2': kelas.isBorder2, 'border-3': kelas.isBorder3, 'border-4': kelas.isBorder4}" 
+        :id="id"
+        :draggable="draggable"
+        @dragstart="dragStart"
+        @dragover.stop
+    >
         <div class="task-content">
             <div class="task-title">
                 <span>{{ task.title }}</span>
@@ -17,13 +23,20 @@
 <script>
 import axios from 'axios'
 export default {
-    props: ['task', 'kelas'],
+    props: ['task', 'kelas', 'draggable', 'id'],
     data: function(){
         return {
             baseUrl: 'http://localhost:3001'
         }
     },
     methods: {
+        dragStart: e => {
+            const target = e.target;
+            e.dataTransfer.setData('task_id', target.id)
+            setTimeout(() => {
+                target.style.display = "none";
+            }, 0)
+        },
         deleteTask(id){
                 swal({
                     title: "Are you sure?",

@@ -14,18 +14,9 @@
         </div>
         <div class="main-page" v-if="isLogin">
             <h1>Hello {{name}}, This Is Your Kanban</h1>
+            <span style="font-size: 18px;">Drag the task to change its category</span>
             <div class="kanban">
-                <category title="Backlogs" :data="backLogs" :kelas="{isBacklog: true, isBorder1: true, isTodos: false, isBorder2: false,
-                    isDone: false, isBorder3: false, isCompleted: false, isBorder4: false}" @deleteTask="deleteTask">
-                </category>
-                <category title="Todo" :data="todos" :kelas="{isBacklog: false, isBorder1: false, isTodos: true, isBorder2: true,
-                    isDone: false, isBorder3: false, isCompleted: false, isBorder4: false}" @deleteTask="deleteTask">
-                </category>
-                <category title="Done" :data="dones" :kelas="{isBacklog: false, isBorder1: false, isTodos: false, isBorder2: false,
-                    isDone: true, isBorder3: true, isCompleted: false, isBorder4: false}" @deleteTask="deleteTask">
-                </category>
-                <category title="Completed" :data="completeds" :kelas="{isBacklog: false, isBorder1: false, isTodos: false, isBorder2: false,
-                    isDone: false, isBorder3: false, isCompleted: true, isBorder4: true}" @deleteTask="deleteTask">
+                <category v-for="i in category" :key="i.id" :id="i.id" :data="filtered[i.id]" :kelas="i.kelas" @deleteTask="deleteTask" @editTask="editTask">
                 </category>
             </div>
             <div class="modal-cust" v-if="addTaskForm">
@@ -64,7 +55,6 @@
         },
         data: function(){
             return{
-                message: 'Hello Vue!',
                 name: '',
                 tasks : [],
                 isLogin: false,
@@ -76,7 +66,37 @@
                 addTaskDesc: '',
                 logInError: '',
                 addTaskError: '',
-                registerError: []
+                registerError: [],
+                category: [
+                    {
+                        id: 'Backlog',
+                        kelas: {
+                            isBacklog: true, isBorder1: true, isTodos: false, isBorder2: false, isDone: false, 
+                            isBorder3: false, isCompleted: false, isBorder4: false
+                        }
+                    },
+                    {
+                        id: 'Todo',
+                        kelas: {
+                            isBacklog: false, isBorder1: false, isTodos: true, isBorder2: true,
+                            isDone: false, isBorder3: false, isCompleted: false, isBorder4: false
+                        }
+                    },
+                    {
+                        id: 'Done',
+                        kelas: {
+                            isBacklog: false, isBorder1: false, isTodos: false, isBorder2: false,
+                            isDone: true, isBorder3: true, isCompleted: false, isBorder4: false
+                        }
+                    },
+                    {
+                        id: 'Completed',
+                        kelas: {
+                            isBacklog: false, isBorder1: false, isTodos: false, isBorder2: false,
+                            isDone: false, isBorder3: false, isCompleted: true, isBorder4: true
+                        }
+                    }
+                ]
 
             }
         } ,
@@ -201,11 +221,42 @@
                     })
                 })
             },
+            editTask(data){
+                let id = data.id
+                let task = this.tasks.find(item => item.id === id)
+                let options = {
+                    url: `${this.baseUrl}/tasks/${data.id}`,
+                    method: 'put',
+                    data: {
+                        title: task.title,
+                        description: task.description,
+                        category: data.category
+                    },
+                    headers: {
+                        token: localStorage.token
+                    }
+                }
+                axios(options)
+                .then(({data}) => {
+                    console.log(`updated ${data.title} category into ${data.category}`)
+                })
+                .catch(err => {
+                    console.log(err.response)
+                })
+            },
             deleteTask(id){
                 this.tasks = this.tasks.filter(item => item.id != id)
             }
     },
     computed: {
+        filtered(){
+            return {
+                Backlog : this.backLogs,
+                Todo: this.todos,
+                Done: this.dones,
+                Completed: this.completeds
+            }
+        },
         backLogs(){
             return this.tasks.filter(item => item.category === 'Backlog')
         },
