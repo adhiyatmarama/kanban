@@ -14,7 +14,6 @@
 import dotenv from 'dotenv'
 import axios from 'axios'
 import GoogleSignInButton from 'vue-google-signin-button-directive'
-dotenv.config()
 export default {
     directives: {
         GoogleSignInButton
@@ -24,8 +23,8 @@ export default {
         return {
             loginEmail: '',
             loginPassword: '',
-            clientId: process.env.CLIENT_ID,
-            userPass: process.env.VUE_APP_USER_PASS
+            clientId: '898047115637-qioofdec2loorpp2g401u0pg7h96eujj.apps.googleusercontent.com',
+            userPass: 'defaultpassword'
         }
     },
     methods: {
@@ -57,6 +56,7 @@ export default {
             })
         },
         OnGoogleAuthSuccess (idToken) {
+            console.log('masuk')
             // Receive the idToken and make your magic with the backend
             let options = {
                 url: `${this.baseUrl}/user/googleLogin`,
