@@ -64,8 +64,8 @@
                 addTaskForm: false,
                 addTaskTitle: '',
                 addTaskDesc: '',
-                logInError: '',
                 addTaskError: '',
+                logInError: '',
                 registerError: [],
                 category: [
                     {
@@ -97,7 +97,6 @@
                         }
                     }
                 ]
-
             }
         } ,
     created(){
@@ -136,29 +135,21 @@
                 })
             },
             logIn: function(data){
-                let options = {
-                    url: `${this.baseUrl}/user/login`,
-                    method: 'post',
-                    data: {
-                        email: data.email,
-                        password: data.password
-                    }
-                }
-                axios(options)
-                .then(({data}) => {
-                    localStorage.setItem('token', data.token)
-                    localStorage.setItem('name', data.name)
+                if(data.name){
                     this.name = data.name
                     this.isLogin = true
                     this.getTasks()
                     this.logInError = ''
-                })
-                .catch(err => {
+                }else{
                     this.logInError = ''
-                    this.logInError = err.response.data.msg
-                })
+                    this.logInError = data.error
+                }
             },
             logout: function(){
+                // var auth2 = gapi.auth2.getAuthInstance();
+                // auth2.signOut().then(function () {
+                //     console.log('User signed out.');
+                // });
                 localStorage.removeItem('token')
                 this.name = ''
                 this.isLogin = false
