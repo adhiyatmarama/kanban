@@ -8,15 +8,16 @@
                 <img src="kids-holding-colorful-blocks-illustration_53876-40275.jpg" style="width: 80%; height: auto;">
             </div>
             <div class="login-register">
-                <login-page :loginPage="loginPage" :logInError="logInError" @logIn="logIn"></login-page>
-                <register-page :registerPage="registerPage" :registerError="registerError" @register="register"></register-page>
+                <login-page :loginPage="loginPage" :logInError="logInError" @logIn="logIn" :baseUrl="baseUrl"></login-page>
+                <register-page :registerPage="registerPage" :registerError="registerError" @register="register" ></register-page>
             </div>
         </div>
         <div class="main-page" v-if="isLogin">
             <h1>Hello {{name}}, This Is Your Kanban</h1>
             <span style="font-size: 18px;">Drag the task to change its category</span>
             <div class="kanban">
-                <category v-for="i in category" :key="i.id" :id="i.id" :data="filtered[i.id]" :kelas="i.kelas" @deleteTask="deleteTask" @editTask="editTask">
+                <category v-for="i in category" :key="i.id" :id="i.id" :data="filtered[i.id]" 
+                    :kelas="i.kelas" @deleteTask="deleteTask" @editTask="editTask" :baseUrl="baseUrl">
                 </category>
             </div>
             <div class="modal-cust" v-if="addTaskForm">
@@ -214,6 +215,11 @@
                 editTask(data){
                     let id = data.id
                     let task = this.tasks.find(item => item.id === id)
+                    this.tasks.forEach(item => {
+                        if(item.id === id){
+                            item.category = data.category
+                        }
+                    })
                     let options = {
                         url: `${this.baseUrl}/tasks/${data.id}`,
                         method: 'put',

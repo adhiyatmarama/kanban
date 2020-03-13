@@ -7,7 +7,7 @@
             <h3>{{id}}</h3>
         </div>
         <div class="card" :id="id" @dragover.prevent @drop.prevent="drop">
-            <task v-for="task in data" :key="task.id" :task="task" :kelas="kelas" @deleteTask = "deleteTask" draggable="true" :id="task.id">
+            <task v-for="task in data" :key="task.id" :task="task" :kelas="kelas" @deleteTask = "deleteTask" draggable="true" :id="task.id" :baseUrl="baseUrl">
             </task>
         </div>
     </div>
@@ -19,7 +19,7 @@
         components: {
             'task': Task
         },
-        props: ['data', 'kelas', 'id'],
+        props: ['data', 'kelas', 'id', 'baseUrl'],
         data: function(){
             return {
                 

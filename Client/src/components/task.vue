@@ -23,10 +23,9 @@
 <script>
 import axios from 'axios'
 export default {
-    props: ['task', 'kelas', 'draggable', 'id'],
+    props: ['task', 'kelas', 'draggable', 'id', 'baseUrl'],
     data: function(){
         return {
-            baseUrl: 'http://localhost:3001'
         }
     },
     methods: {

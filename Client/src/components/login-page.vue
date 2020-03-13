@@ -19,12 +19,11 @@ export default {
     directives: {
         GoogleSignInButton
     },
-    props: ['loginPage', 'logInError'],
+    props: ['loginPage', 'logInError', 'baseUrl'],
     data(){
         return {
             loginEmail: '',
             loginPassword: '',
-            baseUrl: 'http://localhost:3001',
             clientId: process.env.CLIENT_ID,
             userPass: process.env.VUE_APP_USER_PASS
         }
