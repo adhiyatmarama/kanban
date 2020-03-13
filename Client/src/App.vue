@@ -48,7 +48,7 @@
     import Header from './components/header'
     import LoginPage from './components/login-page'
     import RegisterPage from './components/register-page'
-    let rootUrl = 'http://localhost:3001'
+    let rootUrl = 'https://quiet-sierra-03283.herokuapp.com'
     var socket = io.connect(rootUrl)
     export default {
         components: {
